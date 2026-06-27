@@ -1,5 +1,4 @@
 import { Prisma, Product } from "@prisma/client";
-import prisma from "../../../config/database.js";
 import {
   CreateProductDto,
 } from "../dto/create-product.dto.js";
@@ -7,15 +6,20 @@ import {
   UpdateProductDto,
 } from "../dto/update-product.dto.js";
 
-export default class ProductRepository {
+import BaseRepository from "../../../common/repositories/base.repository.js";
+
+export default class ProductRepository extends BaseRepository {
+  constructor() {
+    super();
+  }
   async create(data: CreateProductDto): Promise<Product> {
-    return prisma.product.create({
+    return this.prisma.product.create({
       data,
     });
   }
 
   async findById(id: string): Promise<Product | null> {
-    return prisma.product.findUnique({
+    return this.prisma.product.findUnique({
       where: {
         id,
       },
@@ -23,7 +27,7 @@ export default class ProductRepository {
   }
 
   async findByCode(code: string): Promise<Product | null> {
-    return prisma.product.findUnique({
+    return this.prisma.product.findUnique({
       where: {
         code,
       },
@@ -34,9 +38,9 @@ export default class ProductRepository {
     page = 1,
     limit = 10,
     search?: string,
-    status?: Prisma.ProductStatusFilter
+    status?: this.prisma.productStatusFilter
   ) {
-    const where: Prisma.ProductWhereInput = {};
+    const where: this.prisma.productWhereInput = {};
 
     if (search) {
       where.OR = [
@@ -57,8 +61,8 @@ export default class ProductRepository {
       where.status = status;
     }
 
-    const [products, total] = await prisma.$transaction([
-      prisma.product.findMany({
+    const [products, total] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
@@ -67,7 +71,7 @@ export default class ProductRepository {
         },
       }),
 
-      prisma.product.count({
+      this.prisma.product.count({
         where,
       }),
     ]);
@@ -85,7 +89,7 @@ export default class ProductRepository {
     id: string,
     data: UpdateProductDto
   ): Promise<Product> {
-    return prisma.product.update({
+    return this.prisma.product.update({
       where: {
         id,
       },
@@ -94,7 +98,7 @@ export default class ProductRepository {
   }
 
   async delete(id: string): Promise<Product> {
-    return prisma.product.delete({
+    return this.prisma.product.delete({
       where: {
         id,
       },
@@ -102,7 +106,7 @@ export default class ProductRepository {
   }
 
   async existsByCode(code: string): Promise<boolean> {
-    const product = await prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: {
         code,
       },
@@ -115,6 +119,6 @@ export default class ProductRepository {
   }
 
   async count(): Promise<number> {
-    return prisma.product.count();
+    return this.prisma.product.count();
   }
 }

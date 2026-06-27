@@ -1,19 +1,22 @@
 import { Prisma, Customer } from "@prisma/client";
 
-import prisma from "../../../config/database.js";
-
 import { CreateCustomerDto } from "../dto/create-customer.dto.js";
 import { UpdateCustomerDto } from "../dto/update-customer.dto.js";
 
-export default class CustomerRepository {
+import BaseRepository from "../../../common/repositories/base.repository.js";
+
+export default class CustomerRepository extends BaseRepository {
+  constructor() {
+    super();
+  }
   async create(data: CreateCustomerDto): Promise<Customer> {
-    return prisma.customer.create({
+    return this.prisma.customer.create({
       data,
     });
   }
 
   async findById(id: string): Promise<Customer | null> {
-    return prisma.customer.findUnique({
+    return this.prisma.customer.findUnique({
       where: {
         id,
       },
@@ -27,7 +30,7 @@ export default class CustomerRepository {
   async findByCustomerCode(
     customerCode: string
   ): Promise<Customer | null> {
-    return prisma.customer.findUnique({
+    return this.prisma.customer.findUnique({
       where: {
         customerCode,
       },
@@ -38,9 +41,9 @@ export default class CustomerRepository {
     page = 1,
     limit = 10,
     search?: string,
-    status?: Prisma.CustomerStatusFilter
+    status?: this.prisma.customerStatusFilter
   ) {
-    const where: Prisma.CustomerWhereInput = {};
+    const where: this.prisma.customerWhereInput = {};
 
     if (search) {
       where.OR = [
@@ -61,8 +64,8 @@ export default class CustomerRepository {
       where.status = status;
     }
 
-    const [customers, total] = await prisma.$transaction([
-      prisma.customer.findMany({
+    const [customers, total] = await this.prisma.$transaction([
+      this.prisma.customer.findMany({
         where,
         include: {
           contacts: true,
@@ -75,7 +78,7 @@ export default class CustomerRepository {
         },
       }),
 
-      prisma.customer.count({
+      this.prisma.customer.count({
         where,
       }),
     ]);
@@ -93,7 +96,7 @@ export default class CustomerRepository {
     id: string,
     data: UpdateCustomerDto
   ): Promise<Customer> {
-    return prisma.customer.update({
+    return this.prisma.customer.update({
       where: {
         id,
       },
@@ -102,7 +105,7 @@ export default class CustomerRepository {
   }
 
   async delete(id: string): Promise<Customer> {
-    return prisma.customer.delete({
+    return this.prisma.customer.delete({
       where: {
         id,
       },
@@ -112,7 +115,7 @@ export default class CustomerRepository {
   async existsByCustomerCode(
     customerCode: string
   ): Promise<boolean> {
-    const customer = await prisma.customer.findUnique({
+    const customer = await this.prisma.customer.findUnique({
       where: {
         customerCode,
       },
@@ -125,6 +128,6 @@ export default class CustomerRepository {
   }
 
   async count(): Promise<number> {
-    return prisma.customer.count();
+    return this.prisma.customer.count();
   }
 }

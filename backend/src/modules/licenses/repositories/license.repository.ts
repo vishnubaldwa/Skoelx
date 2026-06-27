@@ -1,16 +1,19 @@
 import { License, LicenseStatus } from "@prisma/client";
 
-import prisma from "../../../config/database.js";
-
 import { CreateLicenseDto } from "../dto/create-license.dto.js";
 
-export default class LicenseRepository {
+import BaseRepository from "../../../common/repositories/base.repository.js";
+
+export default class LicenseRepository extends BaseRepository {
+  constructor() {
+    super();
+  }
   async create(
     data: CreateLicenseDto & {
       licenseKey: string;
     }
   ): Promise<License> {
-    return prisma.license.create({
+    return this.prisma.license.create({
       data: {
         licenseKey: data.licenseKey,
         customerId: data.customerId,
@@ -23,7 +26,7 @@ export default class LicenseRepository {
   }
 
   async findById(id: string) {
-    return prisma.license.findUnique({
+    return this.prisma.license.findUnique({
       where: {
         id,
       },
@@ -38,7 +41,7 @@ export default class LicenseRepository {
   }
 
   async findByLicenseKey(licenseKey: string) {
-    return prisma.license.findUnique({
+    return this.prisma.license.findUnique({
       where: {
         licenseKey,
       },
@@ -51,8 +54,8 @@ export default class LicenseRepository {
   }
 
   async findAll(page = 1, limit = 10) {
-    const [licenses, total] = await prisma.$transaction([
-      prisma.license.findMany({
+    const [licenses, total] = await this.prisma.$transaction([
+      this.prisma.license.findMany({
         skip: (page - 1) * limit,
         take: limit,
         orderBy: {
@@ -65,7 +68,7 @@ export default class LicenseRepository {
         },
       }),
 
-      prisma.license.count(),
+      this.prisma.license.count(),
     ]);
 
     return {
@@ -81,7 +84,7 @@ export default class LicenseRepository {
     id: string,
     status: LicenseStatus
   ) {
-    return prisma.license.update({
+    return this.prisma.license.update({
       where: {
         id,
       },
@@ -95,7 +98,7 @@ export default class LicenseRepository {
     id: string,
     expiresAt: Date
   ) {
-    return prisma.license.update({
+    return this.prisma.license.update({
       where: {
         id,
       },
@@ -107,7 +110,7 @@ export default class LicenseRepository {
   }
 
   async delete(id: string) {
-    return prisma.license.delete({
+    return this.prisma.license.delete({
       where: {
         id,
       },
@@ -115,6 +118,6 @@ export default class LicenseRepository {
   }
 
   async count() {
-    return prisma.license.count();
+    return this.prisma.license.count();
   }
 }
