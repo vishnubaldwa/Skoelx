@@ -10,6 +10,9 @@ import { authorize } from "../middlewares/rbac.middleware.js";
 import customerRoutes from "../modules/customers/routes/customer.routes.js";
 import licenseRoutes from "../modules/licenses/routes/license.routes.js";
 
+import activationRoutes from "../modules/licenses/routes/activation.routes.js";
+import validationRoutes from "../modules/licenses/routes/validation.routes.js";
+
 const router = Router();
 
 router.get("/health", async (_req, res) => {
@@ -58,5 +61,7 @@ router.use("/auth", authRoutes);
 router.use("/products", productRoutes);
 router.use("/customers", customerRoutes);
 router.use("/licenses", licenseRoutes);
+router.use("/licenses", activationRoutes);
+router.use("/licenses", validationRoutes);
 
 export default router;

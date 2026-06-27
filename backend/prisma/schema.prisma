@@ -254,6 +254,14 @@ model LicensePlan {
   createdAt DateTime @default(now())
 
   updatedAt DateTime @updatedAt
+
+  maxDevices Int @default(1)
+
+  allowOffline Boolean @default(true)
+
+  validationInterval Int @default(24)
+
+  gracePeriodDays Int @default(7)
 }
 
 model License {
@@ -295,6 +303,8 @@ model License {
 
   validations LicenseValidationLog[]
 
+  activationCount Int @default(0)
+
   @@index([customerId])
   @@index([productId])
   @@index([planId])
@@ -318,8 +328,19 @@ model LicenseDevice {
 
   license License @relation(fields: [licenseId], references: [id], onDelete: Cascade)
 
+  os String?
+
+  ipAddress String?
+
+  appVersion String?
+
+  lastSeen DateTime?
+
+  deviceStatus String? @default("ACTIVE")
   @@unique([licenseId, machineFingerprint])
   @@index([licenseId])
+
+  
 }
 
 model LicenseValidationLog {
