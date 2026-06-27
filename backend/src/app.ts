@@ -6,13 +6,18 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { env } from "./config/env.js";
+
 import router from "./routes/index.js";
+
+import { requestIdMiddleware } from "./middlewares/request-id.middleware.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 const app: Application = express();
 
 app.disable("x-powered-by");
+
+app.use(requestIdMiddleware);
 
 app.use(
   cors({
@@ -27,7 +32,7 @@ app.use(compression());
 
 app.use(cookieParser());
 
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -38,7 +43,6 @@ app.get("/", (_req, res) => {
     success: true,
     application: env.APP_NAME,
     version: "1.0.0",
-    message: "Skoelx Licensing Platform API",
   });
 });
 
