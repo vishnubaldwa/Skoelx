@@ -12,12 +12,19 @@ import router from "./routes/index.js";
 import { requestIdMiddleware } from "./middlewares/request-id.middleware.js";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import swaggerUi from "swagger-ui-express";
+
+import swaggerSpec from "./config/swagger/swagger.js";
+import { loggerMiddleware } from "./middlewares/logger.middleware.js";
+import { apiLimiter } from "./middlewares/rate-limit.middleware.js";
 
 const app: Application = express();
 
 app.disable("x-powered-by");
 
 app.use(requestIdMiddleware);
+app.use(apiLimiter);
+app.use(loggerMiddleware);
 
 app.use(
   cors({
@@ -45,6 +52,12 @@ app.get("/", (_req, res) => {
     version: "1.0.0",
   });
 });
+
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
 
 app.use("/api/v1", router);
 
