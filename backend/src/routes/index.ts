@@ -1,5 +1,6 @@
 import { Router } from "express";
 import prisma from "../config/database.js";
+import authRoutes from "../modules/auth/routes/auth.routes.js";
 
 const router = Router();
 
@@ -7,19 +8,21 @@ router.get("/health", async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
 
-    res.status(200).json({
+    res.json({
       success: true,
       application: "Skoelx",
       database: "Connected",
+      version: "1.0.0",
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     res.status(500).json({
       success: false,
       database: "Disconnected",
-      error,
     });
   }
 });
+
+router.use("/auth", authRoutes);
 
 export default router;
