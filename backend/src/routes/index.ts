@@ -2,6 +2,7 @@ import { Router } from "express";
 import prisma from "../config/database.js";
 
 import authRoutes from "../modules/auth/routes/auth.routes.js";
+import productRoutes from "../modules/products/routes/product.routes.js";
 
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { authorize } from "../middlewares/rbac.middleware.js";
@@ -51,5 +52,6 @@ router.get(
 );
 
 router.use("/auth", authRoutes);
+router.use("/products", productRoutes);
 
 export default router;
