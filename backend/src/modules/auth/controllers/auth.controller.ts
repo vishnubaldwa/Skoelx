@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+
 import authService from "../services/auth.service.js";
 import { loginSchema } from "../validators/login.validator.js";
+import { ResponseUtil } from "../../../utils/response.js";
 
 class AuthController {
   async login(
@@ -13,11 +15,11 @@ class AuthController {
 
       const result = await authService.login(payload);
 
-      res.status(200).json({
-        success: true,
-        message: "Login successful",
-        data: result,
-      });
+      return ResponseUtil.success(
+        res,
+        "Login successful",
+        result
+      );
     } catch (error) {
       next(error);
     }
