@@ -7,7 +7,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> {
+  ) {
     try {
       const payload = loginSchema.parse(req.body);
 

@@ -1,9 +1,9 @@
 import authRepository from "../repositories/auth.repository.js";
 import { verifyPassword } from "../../../utils/hash.js";
 import { generateAccessToken } from "../../../utils/jwt.js";
-import { LoginDto } from "../validators/login.validator.js";
+import type { LoginDto } from "../validators/login.validator.js";
 
-export class AuthService {
+class AuthService {
   async login(payload: LoginDto) {
     const user = await authRepository.findByEmail(payload.email);
 
@@ -21,7 +21,7 @@ export class AuthService {
     }
 
     if (user.status !== "ACTIVE") {
-      throw new Error("Your account is not active.");
+      throw new Error("User account is not active.");
     }
 
     const accessToken = generateAccessToken({
@@ -29,14 +29,27 @@ export class AuthService {
       email: user.email,
     });
 
+    const refreshToken = crypto.randomUUID();
+
+    await authRepository.saveRefreshToken(
+      user.id,
+      refreshToken,
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+    );
+
     return {
       user: {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        status: user.status,
       },
-      accessToken,
+
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
     };
   }
 }

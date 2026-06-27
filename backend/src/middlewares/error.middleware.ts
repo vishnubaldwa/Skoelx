@@ -1,19 +1,16 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { logger } from "../config/logger.js";
 
-export const errorMiddleware = (
+export function errorMiddleware(
   err: Error,
   _req: Request,
   res: Response,
   _next: NextFunction
-): void => {
+) {
   logger.error(err);
 
   res.status(500).json({
     success: false,
-    message:
-      process.env.NODE_ENV === "production"
-        ? "Internal Server Error"
-        : err.message,
+    message: err.message,
   });
-};
+}
