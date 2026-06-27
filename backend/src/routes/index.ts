@@ -1,7 +1,10 @@
 import { Router } from "express";
 import prisma from "../config/database.js";
+
 import authRoutes from "../modules/auth/routes/auth.routes.js";
+
 import { authenticate } from "../middlewares/auth.middleware.js";
+import { authorize } from "../middlewares/rbac.middleware.js";
 
 const router = Router();
 
@@ -24,12 +27,28 @@ router.get("/health", async (_req, res) => {
   }
 });
 
-router.get("/me", authenticate, (req, res) => {
-  res.json({
-    success: true,
-    user: req.user,
-  });
-});
+router.get(
+  "/me",
+  authenticate,
+  (req, res) => {
+    res.json({
+      success: true,
+      user: req.user,
+    });
+  }
+);
+
+router.get(
+  "/admin",
+  authenticate,
+  authorize("Super Admin"),
+  (_req, res) => {
+    res.json({
+      success: true,
+      message: "Welcome Super Admin",
+    });
+  }
+);
 
 router.use("/auth", authRoutes);
 
