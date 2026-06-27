@@ -7,6 +7,8 @@ import productRoutes from "../modules/products/routes/product.routes.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { authorize } from "../middlewares/rbac.middleware.js";
 
+import customerRoutes from "../modules/customers/routes/customer.routes.js";
+
 const router = Router();
 
 router.get("/health", async (_req, res) => {
