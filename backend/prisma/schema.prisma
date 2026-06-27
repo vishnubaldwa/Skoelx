@@ -13,6 +13,26 @@ enum UserStatus {
   SUSPENDED
 }
 
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  DEVELOPMENT
+  RETIRED
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum LicenseStatus {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+  REVOKED
+}
+
 model User {
   id        String @id @default(cuid())
   firstName String
@@ -24,6 +44,7 @@ model User {
 
   roles         UserRole[]
   refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,11 +124,13 @@ model Product {
 
   description String?
 
-  active Boolean @default(true)
+  status ProductStatus @default(ACTIVE)
 
   versions ProductVersion[]
 
   modules ProductModule[]
+
+  licenses License[]
 
   createdAt DateTime @default(now())
 
@@ -122,6 +145,8 @@ model ProductVersion {
   version String
 
   releaseDate DateTime?
+
+  releaseNotes String?
 
   active Boolean @default(true)
 
@@ -141,9 +166,225 @@ model ProductModule {
 
   description String?
 
+  mandatory Boolean @default(false)
+
   active Boolean @default(true)
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([productId, code])
+}
+
+model Customer {
+  id String @id @default(cuid())
+
+  customerCode String @unique
+
+  organizationName String
+
+  status CustomerStatus @default(ACTIVE)
+
+  country String?
+
+  timezone String?
+
+  contacts CustomerContact[]
+
+  domains CustomerDomain[]
+
+  licenses License[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model CustomerContact {
+  id String @id @default(cuid())
+
+  customerId String
+
+  name String
+
+  designation String?
+
+  email String
+
+  mobile String?
+
+  isPrimary Boolean @default(false)
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+}
+
+model CustomerDomain {
+  id String @id @default(cuid())
+
+  customerId String
+
+  domain String
+
+  subdomain String?
+
+  active Boolean @default(true)
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, domain, subdomain])
+  @@index([customerId])
+}
+
+model LicensePlan {
+  id String @id @default(cuid())
+
+  code String @unique
+
+  name String
+
+  description String?
+
+  durationDays Int
+
+  active Boolean @default(true)
+
+  licenses License[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model License {
+  id String @id @default(cuid())
+
+  licenseKey String @unique
+
+  customerId String
+
+  productId String
+
+  planId String?
+
+  status LicenseStatus @default(ACTIVE)
+
+  issuedAt DateTime @default(now())
+
+  expiresAt DateTime
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  plan LicensePlan? @relation(fields: [planId], references: [id])
+
+  devices LicenseDevice[]
+
+  validations LicenseValidationLog[]
+
+  @@index([customerId])
+  @@index([productId])
+  @@index([planId])
+}
+
+model LicenseDevice {
+  id String @id @default(cuid())
+
+  licenseId String
+
+  deviceName String?
+
+  machineFingerprint String
+
+  activatedAt DateTime @default(now())
+
+  lastValidation DateTime?
+
+  active Boolean @default(true)
+
+  license License @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@unique([licenseId, machineFingerprint])
+  @@index([licenseId])
+}
+
+model LicenseValidationLog {
+  id String @id @default(cuid())
+
+  licenseId String
+
+  validatedAt DateTime @default(now())
+
+  ipAddress String?
+
+  domain String?
+
+  result Boolean
+
+  message String?
+
+  license License @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@index([licenseId])
+  @@index([validatedAt])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+
+  userId String?
+
+  module String
+
+  action String
+
+  referenceId String?
+
+  ipAddress String?
+
+  requestId String?
+
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([module])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id String @id @default(cuid())
+
+  key String @unique
+
+  value String
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model ApiKey {
+  id String @id @default(cuid())
+
+  name String
+
+  apiKey String @unique
+
+  secretHash String
+
+  active Boolean @default(true)
+
+  expiresAt DateTime?
+
+  lastUsedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
 }
