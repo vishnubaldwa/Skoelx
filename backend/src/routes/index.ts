@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "../config/database.js";
 import authRoutes from "../modules/auth/routes/auth.routes.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -21,6 +22,13 @@ router.get("/health", async (_req, res) => {
       database: "Disconnected",
     });
   }
+});
+
+router.get("/me", authenticate, (req, res) => {
+  res.json({
+    success: true,
+    user: req.user,
+  });
 });
 
 router.use("/auth", authRoutes);

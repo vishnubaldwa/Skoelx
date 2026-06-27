@@ -1,26 +1,19 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
 import authService from "../services/auth.service.js";
 import { ResponseUtil } from "../../../utils/response.js";
+import { asyncHandler } from "../../../middlewares/async.middleware.js";
 
 class AuthController {
-  async login(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const result = await authService.login(req.body);
+  login = asyncHandler(async (req: Request, res: Response) => {
+    const result = await authService.login(req.body);
 
-      return ResponseUtil.success(
-        res,
-        "Login successful",
-        result
-      );
-    } catch (error) {
-      next(error);
-    }
-  }
+    return ResponseUtil.success(
+      res,
+      "Login successful",
+      result
+    );
+  });
 }
 
 export default new AuthController();
