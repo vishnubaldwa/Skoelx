@@ -10,6 +10,8 @@ import ProductListPage from "../pages/products/ProductListPage";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 
+import ProtectedRoute from "./ProtectedRoute";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -18,7 +20,13 @@ export default function AppRoutes() {
         element={<LoginPage />}
       />
 
-      <Route element={<DashboardLayout />}>
+      <Route
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route
           path="/dashboard"
           element={<DashboardPage />}
