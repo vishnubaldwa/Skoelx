@@ -8,6 +8,7 @@ import { authenticate } from "../middlewares/auth.middleware.js";
 import { authorize } from "../middlewares/rbac.middleware.js";
 
 import customerRoutes from "../modules/customers/routes/customer.routes.js";
+import licenseRoutes from "../modules/licenses/routes/license.routes.js";
 
 const router = Router();
 
@@ -55,5 +56,7 @@ router.get(
 
 router.use("/auth", authRoutes);
 router.use("/products", productRoutes);
+router.use("/customers", customerRoutes);
+router.use("/licenses", licenseRoutes);
 
 export default router;
