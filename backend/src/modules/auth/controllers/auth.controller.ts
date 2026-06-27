@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
 import authService from "../services/auth.service.js";
-import { loginSchema } from "../validators/login.validator.js";
 import { ResponseUtil } from "../../../utils/response.js";
 
 class AuthController {
@@ -11,9 +10,7 @@ class AuthController {
     next: NextFunction
   ) {
     try {
-      const payload = loginSchema.parse(req.body);
-
-      const result = await authService.login(payload);
+      const result = await authService.login(req.body);
 
       return ResponseUtil.success(
         res,
