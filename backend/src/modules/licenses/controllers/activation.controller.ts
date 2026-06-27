@@ -14,7 +14,7 @@ export default class ActivationController {
     try {
       const device =
         await this.service.activate(
-          req.params.id,
+          String(req.params.id),
           req.body
         );
 

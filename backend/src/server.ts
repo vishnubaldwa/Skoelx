@@ -1,6 +1,6 @@
 import app from "./app.js";
 import { env } from "./config/env.js";
-import { logger } from "./config/logger.js";
+import logger from "./config/logger.js";
 import "./core/events/index.js";
 
 const PORT = env.PORT;

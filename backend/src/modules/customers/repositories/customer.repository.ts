@@ -41,9 +41,9 @@ export default class CustomerRepository extends BaseRepository {
     page = 1,
     limit = 10,
     search?: string,
-    status?: this.prisma.customerStatusFilter
+    status?: Prisma.EnumCustomerStatusFilter
   ) {
-    const where: this.prisma.customerWhereInput = {};
+    const where: Prisma.CustomerWhereInput = {};
 
     if (search) {
       where.OR = [

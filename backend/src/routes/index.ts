@@ -12,6 +12,8 @@ import licenseRoutes from "../modules/licenses/routes/license.routes.js";
 
 import activationRoutes from "../modules/licenses/routes/activation.routes.js";
 import validationRoutes from "../modules/licenses/routes/validation.routes.js";
+import dashboardRoutes from "../modules/dashboard/routes/dashboard.routes.js";
+import systemSettingRoutes from "../modules/settings/routes/system-setting.routes.js";
 
 const router = Router();
 
@@ -63,5 +65,7 @@ router.use("/customers", customerRoutes);
 router.use("/licenses", licenseRoutes);
 router.use("/licenses", activationRoutes);
 router.use("/licenses", validationRoutes);
+router.use("/dashboard", dashboardRoutes);
+router.use("/settings", systemSettingRoutes);
 
 export default router;

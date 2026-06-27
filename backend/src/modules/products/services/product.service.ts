@@ -26,7 +26,14 @@ export default class ProductService {
     search?: string,
     status?: "ACTIVE" | "INACTIVE" | "DEVELOPMENT" | "RETIRED"
   ) {
-    return this.repository.findAll(page, limit, search, status);
+    return this.repository.findAll(
+   page,
+   limit,
+   search,
+   status
+    ? { equals: status }
+    : undefined
+);
   }
 
   async findById(id: string): Promise<Product> {

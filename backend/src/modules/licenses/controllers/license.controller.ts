@@ -56,7 +56,7 @@ export default class LicenseController {
     next: NextFunction
   ) => {
     try {
-      const license = await this.service.findById(req.params.id);
+      const license = await this.service.findById(String(req.params.id));
 
       return res.json({
         success: true,
@@ -80,7 +80,7 @@ export default class LicenseController {
       }
 
       const license = await this.service.renew(
-        req.params.id,
+        String(req.params.id),
         data.expiresAt
       );
 
@@ -100,7 +100,7 @@ export default class LicenseController {
     next: NextFunction
   ) => {
     try {
-      const license = await this.service.suspend(req.params.id);
+      const license = await this.service.suspend(String(req.params.id));
 
       return res.json({
         success: true,
@@ -118,7 +118,7 @@ export default class LicenseController {
     next: NextFunction
   ) => {
     try {
-      const license = await this.service.revoke(req.params.id);
+      const license = await this.service.revoke(String(req.params.id));
 
       return res.json({
         success: true,

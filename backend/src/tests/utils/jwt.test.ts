@@ -1,7 +1,7 @@
 import {
   generateAccessToken,
   verifyAccessToken,
-} from "../utils/jwt.js";
+} from "../../utils/jwt.js";
 
 const token = generateAccessToken({
   userId: "admin-id",

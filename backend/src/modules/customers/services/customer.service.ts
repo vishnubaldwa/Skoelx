@@ -29,11 +29,13 @@ export default class CustomerService {
     status?: "ACTIVE" | "INACTIVE" | "SUSPENDED"
   ) {
     return this.repository.findAll(
-      page,
-      limit,
-      search,
-      status
-    );
+    page,
+   limit,
+   search,
+   status
+    ? { equals: status }
+    : undefined
+);
   }
 
   async findById(id: string): Promise<Customer> {

@@ -38,9 +38,9 @@ export default class ProductRepository extends BaseRepository {
     page = 1,
     limit = 10,
     search?: string,
-    status?: this.prisma.productStatusFilter
+    status?: Prisma.EnumProductStatusFilter
   ) {
-    const where: this.prisma.productWhereInput = {};
+    const where: Prisma.ProductWhereInput = {};
 
     if (search) {
       where.OR = [

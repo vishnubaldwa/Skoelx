@@ -1,4 +1,4 @@
-import { hashPassword, verifyPassword } from "../utils/hash.js";
+import { hashPassword, verifyPassword } from "../../utils/hash.js";
 
 async function main() {
   const password = "Admin@123";

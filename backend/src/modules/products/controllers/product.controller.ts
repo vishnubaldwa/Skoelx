@@ -75,7 +75,7 @@ export default class ProductController {
     next: NextFunction
   ) => {
     try {
-      const product = await this.service.findById(req.params.id);
+      const product = await this.service.findById(String(req.params.id));
 
       return res.json({
         success: true,
@@ -95,7 +95,7 @@ export default class ProductController {
       const data = updateProductSchema.parse(req.body);
 
       const product = await this.service.update(
-        req.params.id,
+        String(req.params.id),
         data
       );
 
@@ -115,7 +115,7 @@ export default class ProductController {
     next: NextFunction
   ) => {
     try {
-      await this.service.delete(req.params.id);
+      await this.service.delete(String(req.params.id));
 
       return res.json({
         success: true,
